@@ -1,0 +1,21 @@
+{
+  "name": "IELTS Writing AI",
+  "short_name": "IELTS Writing",
+  "description": "Luyện thi IELTS Writing thông minh cùng AI",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#fcfcfc",
+  "theme_color": "#f59e0b",
+  "icons": [
+    {
+      "src": "https://cdn-icons-png.flaticon.com/512/711/711016.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "https://cdn-icons-png.flaticon.com/512/711/711016.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
