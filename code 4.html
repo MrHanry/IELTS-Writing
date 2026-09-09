@@ -1,0 +1,763 @@
+<!DOCTYPE html>
+<html lang="vi" class="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>IELTS Writing AI Pro - Model Essay Edition</title>
+
+  <meta name="theme-color" content="#f59e0b">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: { light: '#fef3c7', DEFAULT: '#f59e0b', dark: '#d97706' },
+            mochi: { dark: '#2d3340', input: '#4a3d35', inputDark: '#382f28' }
+          },
+          fontFamily: { sans: ['Quicksand', 'sans-serif'], serif: ['Merriweather', 'serif'] }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&family=Quicksand:wght@400;500;600;700;800&display=swap');
+    
+    body { -webkit-tap-highlight-color: transparent; transition: background-color 0.3s ease, color 0.3s ease; }
+    .app-container { max-width: 480px; margin: 0 auto; min-height: 100vh; position: relative; overflow-x: hidden; box-shadow: 0 0 40px rgba(0,0,0,0.1); }
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+    .dark ::-webkit-scrollbar-thumb { background: #475569; }
+
+    .fade-in { animation: fadeIn 0.3s ease-out forwards; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+    .modal-overlay { background-color: rgba(0,0,0,0.55); backdrop-filter: blur(5px); }
+    
+    .ai-chart table { width: 100%; text-align: left; border-collapse: collapse; margin-top: 10px; margin-bottom: 10px; font-family: 'Quicksand', sans-serif; }
+    .ai-chart th, .ai-chart td { border: 1px solid #e5e7eb; padding: 8px; font-size: 13px; }
+    .dark .ai-chart th, .dark .ai-chart td { border-color: #4b5563; }
+    .ai-chart th { background-color: #fef3c7; color: #d97706; }
+    .dark .ai-chart th { background-color: #451a03; color: #fbbf24; }
+
+    /* Phân loại màu sắc các yếu tố đạt Band điểm chuẩn & nâng cao */
+    .text-vocab { color: #8b5cf6; font-weight: 700; } /* Tím: Từ vựng nâng cao / Thay thế tốt hơn */
+    .text-connector { color: #0ea5e9; font-weight: 700; } /* Xanh dương: Từ nối & liên kết câu */
+    .text-grammar { color: #ef4444; font-weight: 700; } /* Đỏ/Cam: Cấu trúc ngữ pháp phức tạp */
+    
+    .dark .text-vocab { color: #a78bfa; }
+    .dark .text-connector { color: #38bdf8; }
+    .dark .text-grammar { color: #f87171; }
+  </style>
+</head>
+<body class="bg-gray-100 dark:bg-gray-900 text-gray-800 dark:text-gray-100" onload="initializeApp()">
+
+  <div class="app-container bg-[#fcfcfc] dark:bg-mochi-dark flex flex-col pb-24">
+
+    <!-- TOP HEADER -->
+    <header class="flex justify-between items-center px-5 pt-5 pb-3 sticky top-0 bg-[#fcfcfc]/90 dark:bg-mochi-dark/90 backdrop-blur-md z-30 border-b border-gray-100 dark:border-gray-800">
+      <div>
+        <h1 class="text-xl font-bold text-gray-800 dark:text-white flex items-center gap-2">
+          <i class="fa-solid fa-pen-nib text-brand"></i> IELTS Writing <span class="text-[10px] bg-amber-100 dark:bg-amber-900/60 text-brand dark:text-amber-300 font-extrabold px-2 py-0.5 rounded-full">PRO</span>
+        </h1>
+      </div>
+
+      <div class="flex items-center gap-2">
+        <button onclick="resetAllData()" title="Làm mới toàn bộ" class="w-10 h-10 bg-gray-100 dark:bg-gray-800 text-red-500 rounded-2xl flex items-center justify-center text-sm shadow-sm border border-gray-200 dark:border-gray-700 active:scale-95 transition-all">
+          <i class="fa-solid fa-rotate-right"></i>
+        </button>
+        <div class="relative">
+          <button id="btn-settings-toggle" onclick="toggleSettingsMenu(event)" class="w-10 h-10 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-200 rounded-2xl flex items-center justify-center text-base shadow-sm border border-gray-200 dark:border-gray-700">
+            <i class="fa-solid fa-gear"></i>
+          </button>
+          
+          <div id="settings-dropdown" class="hidden absolute right-0 mt-2 w-52 bg-white dark:bg-gray-800 rounded-2xl shadow-2xl border border-gray-100 dark:border-gray-700 py-2 z-50 fade-in">
+            <button onclick="toggleDarkMode(); closeSettingsMenu();" class="w-full text-left px-4 py-2.5 text-xs font-semibold text-gray-700 dark:text-gray-200 hover:bg-amber-50 dark:hover:bg-gray-700 flex items-center gap-3">
+              <i class="fa-solid fa-moon text-amber-500 dark:hidden w-4 text-center"></i>
+              <i class="fa-solid fa-sun text-amber-400 hidden dark:inline-block w-4 text-center"></i>
+              <span>Giao diện Sáng / Tối</span>
+            </button>
+            <button onclick="openAISettingsModal(); closeSettingsMenu();" class="w-full text-left px-4 py-2.5 text-xs font-semibold text-gray-700 dark:text-gray-200 hover:bg-amber-50 dark:hover:bg-gray-700 flex items-center gap-3">
+              <i class="fa-solid fa-key text-brand w-4 text-center"></i>
+              <span>Cài đặt Gemini Key</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- MAIN CONTENT TABS -->
+    <main class="flex-1 px-5 pt-3 pb-6 flex flex-col">
+      
+      <!-- TAB 1: TẠO ĐỀ THI -->
+      <div id="tab-content-create" class="space-y-4 fade-in">
+        <div class="bg-white dark:bg-gray-800/80 rounded-3xl p-5 shadow-sm border border-gray-100 dark:border-gray-700 space-y-3.5">
+          
+          <div>
+            <label class="block text-xs font-bold text-brand dark:text-amber-400 uppercase tracking-wider mb-2">1. Lựa chọn Task</label>
+            <div class="grid grid-cols-2 gap-3">
+              <button id="btn-task-1" onclick="selectTask(1)" class="border-2 border-brand bg-amber-50 dark:bg-amber-900/40 text-brand font-bold py-2.5 rounded-xl transition-all text-sm">Task 1</button>
+              <button id="btn-task-2" onclick="selectTask(2)" class="border-2 border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-500 dark:text-gray-300 font-bold py-2.5 rounded-xl transition-all text-sm">Task 2</button>
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-gray-600 dark:text-gray-300 mb-1">2. Target Band Score</label>
+            <select id="sel-band" onchange="saveFormState()" class="w-full bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-xl px-3.5 py-2.5 text-xs focus:outline-none focus:border-brand dark:text-white font-semibold">
+              <option value="5.0">Band 5.0</option>
+              <option value="6.0">Band 6.0</option>
+              <option value="7.0" selected>Band 7.0</option>
+              <option value="8.0">Band 8.0</option>
+              <option value="9.0">Band 9.0</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-gray-600 dark:text-gray-300 mb-1">3. Chủ đề (Topic)</label>
+            <select id="sel-topic" onchange="saveFormState()" class="w-full bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-xl px-3.5 py-2.5 text-xs focus:outline-none focus:border-brand dark:text-white font-semibold">
+              <option value="Environment">Môi trường (Environment)</option>
+              <option value="Education">Giáo dục (Education)</option>
+              <option value="Technology">Công nghệ (Technology)</option>
+              <option value="Health">Sức khỏe & Y tế (Health)</option>
+              <option value="Economy">Kinh tế (Economy)</option>
+              <option value="Tourism">Du lịch (Tourism)</option>
+              <option value="Work">Công việc & Việc làm (Work & Employment)</option>
+              <option value="Remote Work">Công việc từ xa (Remote Work)</option>
+              <option value="Law">Luật pháp & Tội phạm (Law)</option>
+              <option value="Research">Nghiên cứu & Khoa học (Research)</option>
+              <option value="Transportation">Vận chuyển & Giao thông (Transportation)</option>
+              <option value="Family">Gia đình & Xã hội (Family)</option>
+              <option value="History">Lịch sử & Văn hóa (History)</option>
+              <option value="Sports">Thể thao & Giải trí (Sports)</option>
+              <option value="Art">Hội họa & Nghệ thuật (Art)</option>
+              <option value="Children">Trẻ em & Phát triển (Children)</option>
+              <option value="Society">Đời sống xã hội (Society)</option>
+              <option value="Random">Ngẫu nhiên (Random)</option>
+            </select>
+          </div>
+
+          <div id="wrapper-chart-type" class="transition-all duration-300">
+            <label class="block text-xs font-bold text-gray-600 dark:text-gray-300 mb-1">4. Dạng biểu đồ ưu tiên (Đề thi thật)</label>
+            <select id="sel-chart-type" onchange="updateChartVariations(); saveFormState();" class="w-full bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-xl px-3.5 py-2.5 text-xs focus:outline-none focus:border-brand dark:text-white font-semibold">
+              <option value="Line Chart">Biểu đồ đường (Line Chart)</option>
+              <option value="Bar Chart">Biểu đồ cột (Bar Chart)</option>
+              <option value="Pie Chart">Biểu đồ tròn (Pie Chart)</option>
+              <option value="Table">Bảng số liệu (Table)</option>
+              <option value="Mixed Charts">Biểu đồ kết hợp (Mixed Charts)</option>
+              <option value="Process">Biểu đồ quy trình (Process)</option>
+              <option value="Map">Bản đồ (Map)</option>
+            </select>
+          </div>
+
+          <div id="wrapper-chart-var" class="transition-all duration-300">
+            <label class="block text-xs font-bold text-gray-600 dark:text-gray-300 mb-1">5. Tùy chọn chi tiết dạng đề thi</label>
+            <select id="sel-chart-var" onchange="saveFormState()" class="w-full bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-xl px-3.5 py-2.5 text-xs focus:outline-none focus:border-brand dark:text-white font-semibold">
+              <!-- Render tự động -->
+            </select>
+          </div>
+
+          <button id="btn-generate" onclick="generatePrompt()" class="w-full bg-brand text-white font-bold py-3.5 rounded-2xl shadow-md hover:bg-amber-600 active:scale-95 transition-all text-xs flex items-center justify-center gap-2 mt-2">
+            <i class="fa-solid fa-wand-magic-sparkles"></i> TẠO ĐỀ THI THẬT & BÀI MẪU CHUẨN BAND
+          </button>
+        </div>
+
+        <!-- Khung xem trước đề đã tạo & Gợi ý dạng biểu đồ phù hợp -->
+        <div id="preview-container" class="hidden bg-white dark:bg-gray-800/80 rounded-3xl p-5 shadow-sm border border-gray-100 dark:border-gray-700 relative space-y-3">
+          <div class="flex justify-between items-center">
+            <h3 class="text-sm font-bold text-gray-800 dark:text-white" id="prev-title">Writing Task</h3>
+            <span class="text-[10px] bg-emerald-100 text-emerald-700 dark:bg-emerald-900/50 dark:text-emerald-300 font-bold px-2.5 py-0.5 rounded-full flex items-center gap-1">
+              <i class="fa-solid fa-check-double"></i> Đề thi thật / Đề thi thử chuẩn
+            </span>
+          </div>
+          <p id="prev-prompt" class="text-[13px] text-gray-700 dark:text-gray-300 leading-relaxed font-serif"></p>
+          <div id="prev-chart" class="ai-chart text-xs overflow-x-auto"></div>
+          
+          <!-- Gợi ý loại biểu đồ phù hợp cho chủ đề này -->
+          <div id="chart-recommendations-box" class="bg-amber-50/70 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800/50 rounded-2xl p-3.5 text-xs space-y-1.5">
+            <div class="font-bold text-brand dark:text-amber-400 flex items-center gap-1.5">
+              <i class="fa-solid fa-lightbulb"></i> Gợi ý dạng đề & biểu đồ phù hợp nhất với chủ đề này:
+            </div>
+            <div id="recommendations-content" class="text-gray-600 dark:text-gray-300 text-[11px] leading-relaxed"></div>
+          </div>
+
+          <button onclick="switchTab('do')" class="w-full mt-2 bg-amber-50 hover:bg-amber-100 dark:bg-amber-900/30 text-brand font-bold py-2.5 rounded-xl text-xs transition-colors flex items-center justify-center gap-2 border border-brand/20">
+            <i class="fa-solid fa-arrow-right"></i> Vào Tab Làm Bài & Xem Bài Mẫu Ngay
+          </button>
+        </div>
+      </div>
+
+      <!-- TAB 2: LÀM BÀI LÀM & BÀI MẪU TIÊU CHUẨN BAND -->
+      <div id="tab-content-do" class="space-y-4 hidden fade-in">
+        
+        <!-- Chọn chế độ làm bài hoặc xem bài mẫu -->
+        <div class="bg-white dark:bg-gray-800/80 rounded-3xl p-4 shadow-sm border border-gray-100 dark:border-gray-700 flex gap-2">
+          <button id="mode-btn-full" onclick="switchPracticeMode('full')" class="flex-1 py-2.5 rounded-xl text-xs font-bold transition-all bg-brand text-white shadow-sm">
+            <i class="fa-solid fa-pen-clip mr-1"></i> Tự Viết & Chấm Điểm
+          </button>
+          <button id="mode-btn-model" onclick="switchPracticeMode('model')" class="flex-1 py-2.5 rounded-xl text-xs font-bold transition-all bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300">
+            <i class="fa-solid fa-star mr-1"></i> Bài Mẫu Chuẩn Band
+          </button>
+        </div>
+
+        <!-- Đề bài hiển thị tại màn hình làm bài -->
+        <div class="bg-white dark:bg-gray-800/80 rounded-3xl p-5 shadow-sm border border-gray-100 dark:border-gray-700">
+          <div class="flex justify-between items-center mb-2">
+            <span class="text-xs font-bold text-brand uppercase" id="do-task-label">Đề thi hiện tại</span>
+            <button onclick="switchTab('create')" class="text-[11px] text-gray-400 hover:text-brand underline transition-colors">Đổi đề khác</button>
+          </div>
+          <p id="do-prompt-text" class="text-[13px] text-gray-700 dark:text-gray-300 leading-relaxed font-serif mb-3">Chưa có đề thi nào được tạo. Vui lòng sang tab "Tạo đề thi" để bắt đầu.</p>
+          <div id="do-chart-container" class="ai-chart text-xs overflow-x-auto"></div>
+        </div>
+
+        <!-- Khu vực làm bài: Tự viết hoàn chỉnh -->
+        <div id="section-mode-full" class="bg-white dark:bg-gray-800/80 rounded-3xl p-5 shadow-sm border border-gray-100 dark:border-gray-700 space-y-3">
+          <div class="flex justify-between items-center">
+            <label class="text-xs font-bold text-gray-700 dark:text-gray-300">Bài làm của học viên (Tự động lưu theo thời gian thực)</label>
+            <span id="word-count" class="text-[11px] font-semibold text-gray-400">0 từ</span>
+          </div>
+          <textarea id="input-full-essay" oninput="handleEssayInput()" rows="10" placeholder="Viết bài luận của bạn bằng tiếng Anh ở đây..." class="w-full bg-gray-50 dark:bg-gray-700/50 border border-gray-200 dark:border-gray-600 rounded-2xl p-3.5 text-xs focus:outline-none focus:border-brand dark:text-white leading-relaxed font-sans transition-colors"></textarea>
+          <button onclick="submitEvaluation('full')" id="btn-submit-full" class="w-full bg-brand hover:bg-amber-600 text-white font-bold py-3.5 rounded-2xl shadow-md active:scale-95 transition-all text-xs flex items-center justify-center gap-2">
+            <i class="fa-solid fa-robot"></i> GỬI AI CHẤM ĐIỂM & ĐÁNH GIÁ
+          </button>
+        </div>
+
+        <!-- Khu vực trọng tâm: BÀI MẪU TIÊU CHUẨN BAND TÙY CHỌN (Nhiều màu chữ tượng trưng cho các yếu tố ăn điểm) -->
+        <div id="section-mode-model" class="bg-white dark:bg-gray-800/80 rounded-3xl p-5 shadow-sm border border-brand/50 space-y-4 hidden">
+          <div class="flex justify-between items-center border-b border-gray-100 dark:border-gray-700 pb-3">
+            <div>
+              <h3 class="text-xs font-extrabold uppercase text-brand flex items-center gap-1.5">
+                <i class="fa-solid fa-award"></i> Bài Mẫu Tiêu Chuẩn <span id="model-band-badge">Band 7.0+</span>
+              </h3>
+              <p class="text-[11px] text-gray-400 mt-0.5">Phân tích yếu tố đạt band điểm qua hệ thống màu sắc đa dạng:</p>
+            </div>
+          </div>
+
+          <!-- Chú thích màu sắc -->
+          <div class="grid grid-cols-3 gap-2 text-[10px] font-semibold bg-gray-50 dark:bg-gray-900/50 p-3 rounded-2xl border border-gray-200 dark:border-gray-700">
+            <div class="flex items-center gap-1.5">
+              <span class="w-3 h-3 rounded-full bg-purple-500 inline-block"></span>
+              <span class="text-vocab">Từ vựng thay thế tốt</span>
+            </div>
+            <div class="flex items-center gap-1.5">
+              <span class="w-3 h-3 rounded-full bg-sky-500 inline-block"></span>
+              <span class="text-connector">Từ nối & liên kết</span>
+            </div>
+            <div class="flex items-center gap-1.5">
+              <span class="w-3 h-3 rounded-full bg-red-500 inline-block"></span>
+              <span class="text-grammar">Cấu trúc ngữ pháp</span>
+            </div>
+          </div>
+
+          <div id="model-essay-container" class="p-5 bg-amber-50/30 dark:bg-gray-900/60 rounded-2xl border border-amber-200/50 dark:border-gray-700 text-[14px] leading-[2.4] font-serif shadow-inner">
+            Chưa có bài mẫu. Hãy tạo đề thi từ tab "Tạo đề thi".
+          </div>
+        </div>
+
+        <!-- Kết quả chấm điểm AI -->
+        <div id="ai-evaluation-result" class="hidden bg-white dark:bg-gray-800/90 rounded-3xl p-5 shadow-lg border border-brand/40 fade-in space-y-3">
+          <div class="flex justify-between items-center border-b border-gray-100 dark:border-gray-700 pb-2">
+            <h3 class="text-xs font-extrabold uppercase text-brand flex items-center gap-1.5">
+              <i class="fa-solid fa-award"></i> Kết quả Đánh giá AI
+            </h3>
+            <span id="eval-score-badge" class="bg-brand text-white text-[11px] font-bold px-2.5 py-0.5 rounded-full">Band 7.0</span>
+          </div>
+          <div id="eval-feedback-content" class="text-[13px] text-gray-700 dark:text-gray-300 space-y-2 leading-relaxed font-serif">
+            <!-- Nội dung đánh giá -->
+          </div>
+        </div>
+
+      </div>
+
+    </main>
+
+    <!-- BOTTOM NAVIGATION TABS -->
+    <nav class="fixed bottom-0 left-0 right-0 max-w-[480px] mx-auto bg-white/90 dark:bg-mochi-dark/95 backdrop-blur-md border-t border-gray-100 dark:border-gray-800 px-6 py-2.5 flex justify-around z-40 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)]">
+      <button onclick="switchTab('create')" id="nav-tab-create" class="flex flex-col items-center gap-1 text-brand font-bold transition-all text-xs">
+        <i class="fa-solid fa-wand-magic-sparkles text-base"></i>
+        <span>Tạo Đề Thi</span>
+      </button>
+      <button onclick="switchTab('do')" id="nav-tab-do" class="flex flex-col items-center gap-1 text-gray-400 dark:text-gray-500 font-semibold transition-all text-xs hover:text-brand">
+        <i class="fa-solid fa-pen-to-square text-base"></i>
+        <span>Làm Bài / Bài Mẫu</span>
+      </button>
+    </nav>
+
+    <!-- MODAL: CÀI ĐẶT GEMINI API KEY -->
+    <div id="modal-ai-settings" class="fixed inset-0 z-50 flex items-center justify-center modal-overlay hidden opacity-0 transition-opacity duration-300 p-4">
+      <div class="bg-white dark:bg-gray-800 w-full max-w-sm rounded-3xl p-6 shadow-2xl transition-transform transform scale-95" id="modal-ai-content">
+        <div class="flex justify-between items-center mb-3">
+          <h3 class="text-sm font-bold text-gray-800 dark:text-white flex items-center gap-2">
+            <i class="fa-solid fa-robot text-brand"></i> Cài đặt Gemini API Key
+          </h3>
+          <button onclick="closeAISettingsModal()" class="text-gray-400 hover:text-gray-600 transition-colors">
+            <i class="fa-solid fa-xmark text-lg"></i>
+          </button>
+        </div>
+        
+        <p class="text-[11px] text-gray-500 dark:text-gray-400 mb-3 leading-relaxed">
+          Nhập Gemini API Key từ Google AI Studio để hệ thống kích hoạt tính năng tạo đề và chấm điểm AI.
+        </p>
+
+        <div class="space-y-3">
+          <div>
+            <label class="block text-[11px] font-bold text-gray-600 dark:text-gray-300 mb-1">Gemini API Key</label>
+            <input type="password" id="input-api-key" placeholder="AIzaSy..." class="w-full bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-xl px-3.5 py-2.5 text-xs focus:outline-none focus:border-brand dark:text-white transition-colors">
+          </div>
+          <a href="https://aistudio.google.com/app/apikey" target="_blank" class="inline-block text-[11px] text-brand hover:underline font-semibold">
+            <i class="fa-solid fa-arrow-up-right-from-square mr-1"></i> Lấy Gemini Key ở đâu?
+          </a>
+          <div class="flex gap-2 pt-2">
+            <button onclick="saveApiKey()" class="flex-1 bg-brand hover:bg-amber-600 text-white font-bold py-2.5 rounded-xl shadow-md active:scale-95 transition-all text-xs">
+              LƯU API KEY
+            </button>
+            <button onclick="removeApiKey()" class="bg-red-50 text-red-500 dark:bg-red-900/30 dark:text-red-400 px-3 py-2.5 rounded-xl text-xs font-semibold hover:bg-red-100 transition-colors">
+              Xóa Key
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TOAST NOTIFICATION -->
+    <div id="toast" class="fixed top-5 left-1/2 transform -translate-x-1/2 -translate-y-full opacity-0 bg-gray-800 dark:bg-gray-700 text-white px-4 py-2.5 rounded-full text-xs font-medium shadow-xl z-[80] transition-all flex items-center gap-2 pointer-events-none">
+      <span id="toast-icon"><i class="fa-solid fa-bell text-brand"></i></span> 
+      <span id="toast-msg">Notification</span>
+    </div>
+
+  </div>
+
+  <script>
+    let currentTask = 1;
+    let currentPracticeMode = 'full';
+    
+    let appState = {
+      task: 1,
+      band: "7.0",
+      topic: "Environment",
+      chartType: "Line Chart",
+      chartVar: "1 Biểu đồ",
+      currentExam: null,
+      essayContent: "",
+      activeTab: 'create'
+    };
+
+    const chartVariations = {
+      "Line Chart": ["1 Biểu đồ", "2 Biểu đồ"],
+      "Bar Chart": ["Cột dọc (Vertical)", "Cột ngang (Horizontal)"],
+      "Pie Chart": ["2 Biểu đồ", "3 Biểu đồ", "4 Biểu đồ"],
+      "Table": ["Bảng đơn", "Bảng nhiều hạng mục"],
+      "Mixed Charts": ["Bar + Pie", "Line + Bar", "Table + Pie"],
+      "Process": ["Nhân tạo (Man-made)", "Chu kì tự nhiên (Natural cycle)"],
+      "Map": ["Thay đổi theo thời gian", "So sánh 2 địa điểm"]
+    };
+
+    function initializeApp() {
+      applySavedTheme();
+      loadStateFromLocalStorage();
+      updateChartVariations();
+      restoreFormToUI();
+      
+      if (appState.currentExam) {
+        renderExamData();
+      }
+      
+      switchTab(appState.activeTab || 'create', false);
+    }
+
+    function saveFormState() {
+      appState.task = currentTask;
+      appState.band = document.getElementById('sel-band').value;
+      appState.topic = document.getElementById('sel-topic').value;
+      appState.chartType = document.getElementById('sel-chart-type').value;
+      appState.chartVar = document.getElementById('sel-chart-var').value;
+      localStorage.setItem('mochi_ielts_state_v4', JSON.stringify(appState));
+    }
+
+    function loadStateFromLocalStorage() {
+      const saved = localStorage.getItem('mochi_ielts_state_v4');
+      if (saved) {
+        try { appState = JSON.parse(saved); } catch(e) {}
+      }
+    }
+
+    function restoreFormToUI() {
+      selectTask(appState.task, false);
+      document.getElementById('sel-band').value = appState.band;
+      document.getElementById('sel-topic').value = appState.topic;
+      document.getElementById('sel-chart-type').value = appState.chartType;
+      updateChartVariations();
+      document.getElementById('sel-chart-var').value = appState.chartVar;
+      
+      const essayInput = document.getElementById('input-full-essay');
+      essayInput.value = appState.essayContent || "";
+      handleEssayInput();
+    }
+
+    function resetAllData() {
+      if (confirm("Bạn có chắc chắn muốn làm mới toàn bộ dữ liệu và đề thi hiện tại không?")) {
+        localStorage.removeItem('mochi_ielts_state_v4');
+        appState = { task: 1, band: "7.0", topic: "Environment", chartType: "Line Chart", chartVar: "1 Biểu đồ", currentExam: null, essayContent: "", activeTab: 'create' };
+        restoreFormToUI();
+        document.getElementById('preview-container').classList.add('hidden');
+        document.getElementById('ai-evaluation-result').classList.add('hidden');
+        document.getElementById('do-prompt-text').innerText = "Chưa có đề thi nào được tạo. Vui lòng sang tab 'Tạo đề thi' để bắt đầu.";
+        document.getElementById('do-chart-container').innerHTML = "";
+        document.getElementById('model-essay-container').innerHTML = "Chưa có bài mẫu. Hãy tạo đề thi từ tab 'Tạo đề thi'.";
+        switchTab('create');
+        showToast("Đã làm mới dữ liệu hệ thống!");
+      }
+    }
+
+    function switchTab(tabKey, save = true) {
+      appState.activeTab = tabKey;
+      if (save) saveFormState();
+
+      const tabCreate = document.getElementById('tab-content-create');
+      const tabDo = document.getElementById('tab-content-do');
+      const navCreate = document.getElementById('nav-tab-create');
+      const navDo = document.getElementById('nav-tab-do');
+
+      if (tabKey === 'create') {
+        tabCreate.classList.remove('hidden');
+        tabDo.classList.add('hidden');
+        navCreate.className = "flex flex-col items-center gap-1 text-brand font-bold transition-all text-xs";
+        navDo.className = "flex flex-col items-center gap-1 text-gray-400 dark:text-gray-500 font-semibold transition-all text-xs hover:text-brand";
+      } else {
+        tabCreate.classList.add('hidden');
+        tabDo.classList.remove('hidden');
+        navDo.className = "flex flex-col items-center gap-1 text-brand font-bold transition-all text-xs";
+        navCreate.className = "flex flex-col items-center gap-1 text-gray-400 dark:text-gray-500 font-semibold transition-all text-xs hover:text-brand";
+        
+        if (appState.currentExam) {
+          renderExamData();
+        }
+      }
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function switchPracticeMode(mode) {
+      currentPracticeMode = mode;
+      const btnFull = document.getElementById('mode-btn-full');
+      const btnModel = document.getElementById('mode-btn-model');
+      const secFull = document.getElementById('section-mode-full');
+      const secModel = document.getElementById('section-mode-model');
+
+      if (mode === 'full') {
+        btnFull.className = "flex-1 py-2.5 rounded-xl text-xs font-bold transition-all bg-brand text-white shadow-sm";
+        btnModel.className = "flex-1 py-2.5 rounded-xl text-xs font-bold transition-all bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600";
+        secFull.classList.remove('hidden');
+        secModel.classList.add('hidden');
+      } else {
+        btnModel.className = "flex-1 py-2.5 rounded-xl text-xs font-bold transition-all bg-brand text-white shadow-sm";
+        btnFull.className = "flex-1 py-2.5 rounded-xl text-xs font-bold transition-all bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600";
+        secModel.classList.remove('hidden');
+        secFull.classList.add('hidden');
+        renderModelEssay();
+      }
+    }
+
+    function selectTask(taskNum, save = true) {
+      currentTask = taskNum;
+      const btn1 = document.getElementById('btn-task-1');
+      const btn2 = document.getElementById('btn-task-2');
+      const wrapType = document.getElementById('wrapper-chart-type');
+      const wrapVar = document.getElementById('wrapper-chart-var');
+
+      if (taskNum === 1) {
+        btn1.className = "border-2 border-brand bg-amber-50 dark:bg-amber-900/40 text-brand font-bold py-2.5 rounded-xl transition-all text-sm shadow-sm";
+        btn2.className = "border-2 border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-500 dark:text-gray-300 font-bold py-2.5 rounded-xl transition-all text-sm";
+        wrapType.style.display = 'block';
+        wrapVar.style.display = 'block';
+      } else {
+        btn2.className = "border-2 border-brand bg-amber-50 dark:bg-amber-900/40 text-brand font-bold py-2.5 rounded-xl transition-all text-sm shadow-sm";
+        btn1.className = "border-2 border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-500 dark:text-gray-300 font-bold py-2.5 rounded-xl transition-all text-sm";
+        wrapType.style.display = 'none';
+        wrapVar.style.display = 'none';
+      }
+      if (save) saveFormState();
+    }
+
+    function updateChartVariations() {
+      const type = document.getElementById('sel-chart-type').value;
+      const selVar = document.getElementById('sel-chart-var');
+      selVar.innerHTML = '';
+      if (chartVariations[type]) {
+        chartVariations[type].forEach(v => {
+          selVar.innerHTML += `<option value="${v}">${v}</option>`;
+        });
+      }
+    }
+
+    async function generatePrompt() {
+      const apiKey = localStorage.getItem('mochilife_gemini_key');
+      if (!apiKey) {
+        showToast('Vui lòng nhập Gemini API Key để tạo đề!', true);
+        openAISettingsModal();
+        return;
+      }
+
+      saveFormState();
+      const btn = document.getElementById('btn-generate');
+      btn.disabled = true;
+      btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> ĐANG TÌM ĐỀ THI THẬT & TẠO BÀI MẪU...';
+
+      let aiPrompt = `Hãy đóng vai chuyên gia khảo thí IELTS. Hãy ưu tiên lấy MỘT ĐỀ THI THẬT hoặc ĐỀ THI THỬ CHÍNH THỨC đã từng xuất hiện gần đây (hoặc chuẩn format Cambridge) cho:
+- IELTS Writing Task ${currentTask}
+- Target Band: ${appState.band}
+- Chủ đề: ${appState.topic}
+${currentTask === 1 ? `- Dạng biểu đồ ưu tiên: ${appState.chartType} (${appState.chartVar})` : ''}
+
+Yêu cầu về Bài mẫu (Model Essay):
+- Viết bài luận chuẩn mực đạt đúng Band ${appState.band}.
+- Trong bài mẫu, hãy phân loại và bọc các từ/cụm từ theo cấu trúc tag sau để hệ thống đổi màu trực quan:
+  1. [[[v:từ_vựng_nâng_cao_hoặc_thay_thế_tốt]]] (dùng màu tím)
+  2. [[[c:từ_nối_và_liên_kết_câu]]] (dùng màu xanh dương)
+  3. [[[g:cấu_trúc_ngữ_pháp_phức_tạp]]] (dùng màu đỏ/cam)
+
+Yêu cầu về gợi ý:
+- Nếu là AI tạo đề hoặc dựa trên xu hướng đề thi thật, hãy đưa ra danh sách các loại biểu đồ/dạng đề phù hợp nhất với chủ đề "${appState.topic}" để học viên có thêm lựa chọn ôn tập thực tế.
+
+Trả về DUY NHẤT định dạng JSON (không có markdown code block hay text thừa):
+{
+  "prompt_text": "Nội dung đề bài đầy đủ chuẩn định dạng IELTS Writing bằng tiếng Anh...",
+  "model_essay_template": "Bài mẫu hoàn chỉnh bằng tiếng Anh, có cài các thẻ [[[v:...]]], [[[c:...]]], [[[g:...]]] minh họa các yếu tố ăn điểm band...",
+  "chart_simulation": "Bảng dữ liệu bằng Markdown Table hoặc mô tả cấu trúc nếu có, nếu không để chuỗi rỗng",
+  "chart_recommendations": "Gợi ý 2-3 loại biểu đồ/dạng bài thường hay ra thi thật nhất với chủ đề này (viết bằng tiếng Việt ngắn gọn, súc tích)"
+}`;
+
+      try {
+        const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-lite-latest:generateContent?key=${apiKey}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            contents: [{ parts: [{ text: aiPrompt }] }],
+            generationConfig: { responseMimeType: "application/json" }
+          })
+        });
+
+        const result = await res.json();
+        if (result.error) throw new Error(result.error.message);
+        
+        let jsonStr = result.candidates[0].content.parts[0].text;
+        jsonStr = jsonStr.replace(/```json/gi, '').replace(/```/g, '').trim();
+        const data = JSON.parse(jsonStr);
+
+        // Parse tags thành các class màu chữ tương ứng (không highlight nền)
+        let processedHtml = data.model_essay_template
+          .replace(/\[\[\[v:(.*?)\]\]\]/g, (match, phrase) => `<span class="text-vocab" title="Từ vựng nâng cao / Thay thế tốt hơn">${phrase}</span>`)
+          .replace(/\[\[\[c:(.*?)\]\]\]/g, (match, phrase) => `<span class="text-connector" title="Từ nối & liên kết câu">${phrase}</span>`)
+          .replace(/\[\[\[g:(.*?)\]\]\]/g, (match, phrase) => `<span class="text-grammar" title="Cấu trúc ngữ pháp phức tạp">${phrase}</span>`);
+
+        data.processedModelHtml = processedHtml;
+
+        appState.currentExam = data;
+        appState.essayContent = ""; 
+        saveFormState();
+        
+        renderExamData();
+        showToast('Đã trích xuất đề thi thật & bài mẫu chuẩn thành công!');
+        switchTab('do');
+
+      } catch (err) {
+        showToast('Lỗi kết nối AI hoặc JSON! Vui lòng kiểm tra lại Key.', true);
+        console.error(err);
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fa-solid fa-wand-magic-sparkles"></i> TẠO ĐỀ THI THẬT & BÀI MẪU CHUẨN BAND';
+      }
+    }
+
+    function renderExamData() {
+      if (!appState.currentExam) return;
+      const exam = appState.currentExam;
+
+      // Preview Tab 1
+      document.getElementById('preview-container').classList.remove('hidden');
+      document.getElementById('prev-title').innerText = `IELTS Writing Task ${appState.task}`;
+      document.getElementById('prev-prompt').innerText = exam.prompt_text;
+      renderChartHtml(exam.chart_simulation, document.getElementById('prev-chart'));
+      
+      const recBox = document.getElementById('chart-recommendations-box');
+      if (exam.chart_recommendations) {
+        recBox.style.display = 'block';
+        document.getElementById('recommendations-content').innerText = exam.chart_recommendations;
+      } else {
+        recBox.style.display = 'none';
+      }
+
+      // Tab 2 Làm bài
+      document.getElementById('do-task-label').innerText = `IELTS Writing Task ${appState.task} (${appState.topic} - Band ${appState.band})`;
+      document.getElementById('do-prompt-text').innerText = exam.prompt_text;
+      renderChartHtml(exam.chart_simulation, document.getElementById('do-chart-container'));
+
+      document.getElementById('model-band-badge').innerText = `Band ${appState.band}`;
+      renderModelEssay();
+    }
+
+    function renderChartHtml(simText, container) {
+      if (!simText) { container.innerHTML = ''; return; }
+      let htmlChart = simText
+        .replace(/^\|(.+)\|$/gm, '<tr><td>$1</td></tr>')
+        .replace(/\|/g, '</td><td>')
+        .replace(/<tr><td>[-:]+<\/td><\/tr>/g, '');
+      
+      if (htmlChart.includes('<tr>')) {
+         container.innerHTML = `<table class="w-full">${htmlChart}</table>`;
+      } else {
+         container.innerHTML = `<div class="p-3 bg-amber-50 dark:bg-amber-900/20 rounded-xl border border-amber-200 dark:border-amber-800 whitespace-pre-wrap">${simText}</div>`;
+      }
+    }
+
+    function handleEssayInput() {
+      const val = document.getElementById('input-full-essay').value;
+      appState.essayContent = val;
+      const words = val.trim() ? val.trim().split(/\s+/).length : 0;
+      document.getElementById('word-count').innerText = `${words} từ`;
+      saveFormState();
+    }
+
+    function renderModelEssay() {
+      if (!appState.currentExam || !appState.currentExam.processedModelHtml) {
+        document.getElementById('model-essay-container').innerHTML = "Chưa có bài mẫu. Hãy tạo đề thi trước tại tab 'Tạo đề thi'.";
+        return;
+      }
+      
+      document.getElementById('model-essay-container').innerHTML = 
+        `<div class="whitespace-pre-wrap font-serif text-gray-800 dark:text-gray-200">${appState.currentExam.processedModelHtml}</div>`;
+    }
+
+    async function submitEvaluation(mode) {
+      const apiKey = localStorage.getItem('mochilife_gemini_key');
+      if (!apiKey) {
+        showToast('Vui lòng nhập Gemini API Key để AI chấm điểm!', true);
+        openAISettingsModal();
+        return;
+      }
+
+      let payloadContent = appState.essayContent;
+      if (!payloadContent || payloadContent.trim().length < 20) {
+        showToast('Bài viết quá ngắn để chấm điểm!', true);
+        return;
+      }
+
+      const btn = document.getElementById('btn-submit-full');
+      btn.disabled = true;
+      btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> AI ĐANG CHẤM BÀI...';
+
+      let aiEvalPrompt = `Bạn là giám khảo IELTS examiner chuyên nghiệp. Hãy chấm điểm và đánh giá bài làm của học viên dựa trên Target Band ${appState.band}.
+Đề bài: ${appState.currentExam.prompt_text}
+Bài làm của học viên:
+${payloadContent}
+
+Yêu cầu trả về duy nhất định dạng JSON (không markdown code block):
+{
+  "score": "Band dự kiến (Ví dụ: 6.0, 6.5, 7.0...)",
+  "feedback_html": "Nhận xét chi tiết gồm: 1. Đánh giá chung so với Band ${appState.band}, 2. Phân tích cụ thể các lỗi ngữ pháp/từ vựng, 3. Lời khuyên nâng cấp cụ thể. Trình bày ngắn gọn bằng các thẻ HTML p, ul, li chuyên nghiệp."
+}`;
+
+      try {
+        const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-lite-latest:generateContent?key=${apiKey}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            contents: [{ parts: [{ text: aiEvalPrompt }] }],
+            generationConfig: { responseMimeType: "application/json" }
+          })
+        });
+
+        const result = await res.json();
+        if (result.error) throw new Error(result.error.message);
+
+        let jsonStr = result.candidates[0].content.parts[0].text;
+        jsonStr = jsonStr.replace(/```json/gi, '').replace(/```/g, '').trim();
+        const evalData = JSON.parse(jsonStr);
+
+        document.getElementById('ai-evaluation-result').classList.remove('hidden');
+        document.getElementById('eval-score-badge').innerText = evalData.score;
+        document.getElementById('eval-feedback-content').innerHTML = evalData.feedback_html;
+        
+        showToast('AI đã hoàn tất chấm điểm và nhận xét!');
+        document.getElementById('ai-evaluation-result').scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+      } catch (err) {
+        showToast('Lỗi khi gọi AI chấm điểm!', true);
+        console.error(err);
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fa-solid fa-robot"></i> GỬI AI CHẤM ĐIỂM & ĐÁNH GIÁ';
+      }
+    }
+
+    function toggleSettingsMenu(e) {
+      if (e) e.stopPropagation();
+      document.getElementById('settings-dropdown').classList.toggle('hidden');
+    }
+    function closeSettingsMenu() {
+      document.getElementById('settings-dropdown').classList.add('hidden');
+    }
+    document.addEventListener('click', (e) => {
+      const menu = document.getElementById('settings-dropdown');
+      const btn = document.getElementById('btn-settings-toggle');
+      if (menu && !menu.classList.contains('hidden') && !menu.contains(e.target) && !btn.contains(e.target)) {
+        closeSettingsMenu();
+      }
+    });
+
+    function toggleDarkMode() {
+      const html = document.documentElement;
+      if (html.classList.contains('dark')) {
+        html.classList.remove('dark'); localStorage.setItem('mochi_theme', 'light');
+      } else {
+        html.classList.add('dark'); localStorage.setItem('mochi_theme', 'dark');
+      }
+    }
+    function applySavedTheme() {
+      const theme = localStorage.getItem('mochi_theme');
+      if (theme === 'dark' || (!theme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+        document.documentElement.classList.add('dark');
+      } else {
+        document.documentElement.classList.remove('dark');
+      }
+    }
+
+    function showToast(msg, isError = false) {
+      const t = document.getElementById('toast');
+      document.getElementById('toast-msg').innerText = msg;
+      document.getElementById('toast-icon').innerHTML = isError ? '<i class="fa-solid fa-triangle-exclamation text-red-400"></i>' : '<i class="fa-solid fa-check-circle text-green-400"></i>';
+      t.classList.remove('-translate-y-full', 'opacity-0');
+      t.classList.add('translate-y-0', 'opacity-100');
+      setTimeout(() => { t.classList.remove('translate-y-0', 'opacity-100'); t.classList.add('-translate-y-full', 'opacity-0'); }, 2500);
+    }
+
+    function openAISettingsModal() {
+      const modal = document.getElementById('modal-ai-settings');
+      document.getElementById('input-api-key').value = localStorage.getItem('mochilife_gemini_key') || '';
+      modal.classList.remove('hidden'); setTimeout(() => { modal.classList.remove('opacity-0'); document.getElementById('modal-ai-content').classList.remove('scale-95'); }, 10);
+    }
+    function closeAISettingsModal() {
+      const modal = document.getElementById('modal-ai-settings');
+      modal.classList.add('opacity-0'); document.getElementById('modal-ai-content').classList.add('scale-95');
+      setTimeout(() => modal.classList.add('hidden'), 300);
+    }
+    function saveApiKey() {
+      const key = document.getElementById('input-api-key').value.trim();
+      if (!key) { showToast('Vui lòng nhập API Key', true); return; }
+      localStorage.setItem('mochilife_gemini_key', key); closeAISettingsModal(); showToast('Đã lưu API Key thành công!');
+    }
+    function removeApiKey() { 
+      localStorage.removeItem('mochilife_gemini_key'); 
+      document.getElementById('input-api-key').value = ''; 
+      closeAISettingsModal(); 
+      showToast('Đã xóa Key'); 
+    }
+  </script>
+</body>
+</html>
