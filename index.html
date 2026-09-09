@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>IELTS Writing AI Pro - Model Essay Edition</title>
 
+  <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#f59e0b">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -48,10 +49,9 @@
     .ai-chart th { background-color: #fef3c7; color: #d97706; }
     .dark .ai-chart th { background-color: #451a03; color: #fbbf24; }
 
-    /* Phân loại màu sắc các yếu tố đạt Band điểm chuẩn & nâng cao */
-    .text-vocab { color: #8b5cf6; font-weight: 700; } /* Tím: Từ vựng nâng cao / Thay thế tốt hơn */
-    .text-connector { color: #0ea5e9; font-weight: 700; } /* Xanh dương: Từ nối & liên kết câu */
-    .text-grammar { color: #ef4444; font-weight: 700; } /* Đỏ/Cam: Cấu trúc ngữ pháp phức tạp */
+    .text-vocab { color: #8b5cf6; font-weight: 700; }
+    .text-connector { color: #0ea5e9; font-weight: 700; }
+    .text-grammar { color: #ef4444; font-weight: 700; }
     
     .dark .text-vocab { color: #a78bfa; }
     .dark .text-connector { color: #38bdf8; }
@@ -88,6 +88,10 @@
             <button onclick="openAISettingsModal(); closeSettingsMenu();" class="w-full text-left px-4 py-2.5 text-xs font-semibold text-gray-700 dark:text-gray-200 hover:bg-amber-50 dark:hover:bg-gray-700 flex items-center gap-3">
               <i class="fa-solid fa-key text-brand w-4 text-center"></i>
               <span>Cài đặt Gemini Key</span>
+            </button>
+            <button id="btn-install-app" onclick="installApp(); closeSettingsMenu();" class="hidden w-full text-left px-4 py-2.5 text-xs font-semibold text-gray-700 dark:text-gray-200 hover:bg-amber-50 dark:hover:bg-gray-700 flex items-center gap-3">
+              <i class="fa-solid fa-download text-brand w-4 text-center"></i>
+              <span>Cài đặt ứng dụng</span>
             </button>
           </div>
         </div>
@@ -160,7 +164,6 @@
           <div id="wrapper-chart-var" class="transition-all duration-300">
             <label class="block text-xs font-bold text-gray-600 dark:text-gray-300 mb-1">5. Tùy chọn chi tiết dạng đề thi</label>
             <select id="sel-chart-var" onchange="saveFormState()" class="w-full bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-xl px-3.5 py-2.5 text-xs focus:outline-none focus:border-brand dark:text-white font-semibold">
-              <!-- Render tự động -->
             </select>
           </div>
 
@@ -169,7 +172,6 @@
           </button>
         </div>
 
-        <!-- Khung xem trước đề đã tạo & Gợi ý dạng biểu đồ phù hợp -->
         <div id="preview-container" class="hidden bg-white dark:bg-gray-800/80 rounded-3xl p-5 shadow-sm border border-gray-100 dark:border-gray-700 relative space-y-3">
           <div class="flex justify-between items-center">
             <h3 class="text-sm font-bold text-gray-800 dark:text-white" id="prev-title">Writing Task</h3>
@@ -180,7 +182,6 @@
           <p id="prev-prompt" class="text-[13px] text-gray-700 dark:text-gray-300 leading-relaxed font-serif"></p>
           <div id="prev-chart" class="ai-chart text-xs overflow-x-auto"></div>
           
-          <!-- Gợi ý loại biểu đồ phù hợp cho chủ đề này -->
           <div id="chart-recommendations-box" class="bg-amber-50/70 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800/50 rounded-2xl p-3.5 text-xs space-y-1.5">
             <div class="font-bold text-brand dark:text-amber-400 flex items-center gap-1.5">
               <i class="fa-solid fa-lightbulb"></i> Gợi ý dạng đề & biểu đồ phù hợp nhất với chủ đề này:
@@ -197,7 +198,6 @@
       <!-- TAB 2: LÀM BÀI LÀM & BÀI MẪU TIÊU CHUẨN BAND -->
       <div id="tab-content-do" class="space-y-4 hidden fade-in">
         
-        <!-- Chọn chế độ làm bài hoặc xem bài mẫu -->
         <div class="bg-white dark:bg-gray-800/80 rounded-3xl p-4 shadow-sm border border-gray-100 dark:border-gray-700 flex gap-2">
           <button id="mode-btn-full" onclick="switchPracticeMode('full')" class="flex-1 py-2.5 rounded-xl text-xs font-bold transition-all bg-brand text-white shadow-sm">
             <i class="fa-solid fa-pen-clip mr-1"></i> Tự Viết & Chấm Điểm
@@ -207,7 +207,6 @@
           </button>
         </div>
 
-        <!-- Đề bài hiển thị tại màn hình làm bài -->
         <div class="bg-white dark:bg-gray-800/80 rounded-3xl p-5 shadow-sm border border-gray-100 dark:border-gray-700">
           <div class="flex justify-between items-center mb-2">
             <span class="text-xs font-bold text-brand uppercase" id="do-task-label">Đề thi hiện tại</span>
@@ -217,7 +216,6 @@
           <div id="do-chart-container" class="ai-chart text-xs overflow-x-auto"></div>
         </div>
 
-        <!-- Khu vực làm bài: Tự viết hoàn chỉnh -->
         <div id="section-mode-full" class="bg-white dark:bg-gray-800/80 rounded-3xl p-5 shadow-sm border border-gray-100 dark:border-gray-700 space-y-3">
           <div class="flex justify-between items-center">
             <label class="text-xs font-bold text-gray-700 dark:text-gray-300">Bài làm của học viên (Tự động lưu theo thời gian thực)</label>
@@ -229,7 +227,6 @@
           </button>
         </div>
 
-        <!-- Khu vực trọng tâm: BÀI MẪU TIÊU CHUẨN BAND TÙY CHỌN (Nhiều màu chữ tượng trưng cho các yếu tố ăn điểm) -->
         <div id="section-mode-model" class="bg-white dark:bg-gray-800/80 rounded-3xl p-5 shadow-sm border border-brand/50 space-y-4 hidden">
           <div class="flex justify-between items-center border-b border-gray-100 dark:border-gray-700 pb-3">
             <div>
@@ -240,7 +237,6 @@
             </div>
           </div>
 
-          <!-- Chú thích màu sắc -->
           <div class="grid grid-cols-3 gap-2 text-[10px] font-semibold bg-gray-50 dark:bg-gray-900/50 p-3 rounded-2xl border border-gray-200 dark:border-gray-700">
             <div class="flex items-center gap-1.5">
               <span class="w-3 h-3 rounded-full bg-purple-500 inline-block"></span>
@@ -261,7 +257,6 @@
           </div>
         </div>
 
-        <!-- Kết quả chấm điểm AI -->
         <div id="ai-evaluation-result" class="hidden bg-white dark:bg-gray-800/90 rounded-3xl p-5 shadow-lg border border-brand/40 fade-in space-y-3">
           <div class="flex justify-between items-center border-b border-gray-100 dark:border-gray-700 pb-2">
             <h3 class="text-xs font-extrabold uppercase text-brand flex items-center gap-1.5">
@@ -270,7 +265,6 @@
             <span id="eval-score-badge" class="bg-brand text-white text-[11px] font-bold px-2.5 py-0.5 rounded-full">Band 7.0</span>
           </div>
           <div id="eval-feedback-content" class="text-[13px] text-gray-700 dark:text-gray-300 space-y-2 leading-relaxed font-serif">
-            <!-- Nội dung đánh giá -->
           </div>
         </div>
 
@@ -337,6 +331,7 @@
   <script>
     let currentTask = 1;
     let currentPracticeMode = 'full';
+    let deferredPrompt = null;
     
     let appState = {
       task: 1,
@@ -359,12 +354,43 @@
       "Map": ["Thay đổi theo thời gian", "So sánh 2 địa điểm"]
     };
 
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+      const installBtn = document.getElementById('btn-install-app');
+      if (installBtn) installBtn.classList.remove('hidden');
+    });
+
+    function installApp() {
+      if (deferredPrompt) {
+        deferredPrompt.prompt();
+        deferredPrompt.userChoice.then((choiceResult) => {
+          if (choiceResult.outcome === 'accepted') {
+            console.log('User accepted the install prompt');
+          }
+          deferredPrompt = null;
+          const installBtn = document.getElementById('btn-install-app');
+          if (installBtn) installBtn.classList.add('hidden');
+        });
+      } else {
+        showToast('Ứng dụng đã sẵn sàng hoặc trình duyệt không hỗ trợ!');
+      }
+    }
+
     function initializeApp() {
       applySavedTheme();
       loadStateFromLocalStorage();
       updateChartVariations();
       restoreFormToUI();
       
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('./sw.js')
+            .then(() => console.log('Service Worker registered successfully!'))
+            .catch(err => console.log('Service Worker registration failed:', err));
+        });
+      }
+
       if (appState.currentExam) {
         renderExamData();
       }
@@ -550,7 +576,6 @@ Trả về DUY NHẤT định dạng JSON (không có markdown code block hay te
         jsonStr = jsonStr.replace(/```json/gi, '').replace(/```/g, '').trim();
         const data = JSON.parse(jsonStr);
 
-        // Parse tags thành các class màu chữ tương ứng (không highlight nền)
         let processedHtml = data.model_essay_template
           .replace(/\[\[\[v:(.*?)\]\]\]/g, (match, phrase) => `<span class="text-vocab" title="Từ vựng nâng cao / Thay thế tốt hơn">${phrase}</span>`)
           .replace(/\[\[\[c:(.*?)\]\]\]/g, (match, phrase) => `<span class="text-connector" title="Từ nối & liên kết câu">${phrase}</span>`)
@@ -579,7 +604,6 @@ Trả về DUY NHẤT định dạng JSON (không có markdown code block hay te
       if (!appState.currentExam) return;
       const exam = appState.currentExam;
 
-      // Preview Tab 1
       document.getElementById('preview-container').classList.remove('hidden');
       document.getElementById('prev-title').innerText = `IELTS Writing Task ${appState.task}`;
       document.getElementById('prev-prompt').innerText = exam.prompt_text;
@@ -593,7 +617,6 @@ Trả về DUY NHẤT định dạng JSON (không có markdown code block hay te
         recBox.style.display = 'none';
       }
 
-      // Tab 2 Làm bài
       document.getElementById('do-task-label').innerText = `IELTS Writing Task ${appState.task} (${appState.topic} - Band ${appState.band})`;
       document.getElementById('do-prompt-text').innerText = exam.prompt_text;
       renderChartHtml(exam.chart_simulation, document.getElementById('do-chart-container'));
